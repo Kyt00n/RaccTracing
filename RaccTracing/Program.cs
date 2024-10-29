@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using RaccTracing;
 
 var currentDirectory = Directory.GetCurrentDirectory();
 var filePath = Path.Combine(currentDirectory, "image.ppm");
@@ -26,6 +27,5 @@ for (int j = 0; j < image_height; j++)
     }
 }
 Console.WriteLine("Done");
-
 File.WriteAllText(filePath, sb.ToString());
 Console.WriteLine($"Output saved to {filePath}");
