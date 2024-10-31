@@ -15,15 +15,8 @@ for (int j = 0; j < image_height; j++)
     Console.WriteLine($"Scan lines remaining: {image_height-j}");
     for (int i = 0; i < image_width; i++)
     {
-        var red = (double)i / (image_width - 1);
-        var green = (double)j / (image_height - 1);
-        var blue = 0.0;
-
-        var ir = (int)(255.999 * red);
-        var ig = (int)(255.999 * green);
-        var ib = (int)(255.999 * blue);
-
-        sb.AppendLine($"{ir} {ig} {ib}");
+        var pixelColor = new Color((double)i / (image_width - 1), (double)j / (image_height - 1), 0.0);
+        ColorFunctions.WriteColor(sb, pixelColor);
     }
 }
 Console.WriteLine("Done");
