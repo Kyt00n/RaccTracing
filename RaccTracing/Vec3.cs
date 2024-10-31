@@ -72,6 +72,23 @@ public class Vec3(double element0, double element1, double element2)
         return v *= 1 / t;
     }
 
+    public double Dot(Vec3 u, Vec3 v)
+    {
+        return u[0] * v[0]
+               + u[1] * v[1]
+               + u[2] * v[2];
+    }
+
+    public Vec3 Cross(Vec3 u, Vec3 v)
+    {
+        return new Vec3(
+            u[1] * v[2] - u[2] * v[1],
+            u[2] * v[1] - u[0] * v[2],
+            u[0] * v[1] - u[1] * v[0]
+            );
+    }
+
+    public Vec3 UnitVector(Vec3 v) => v / v.Length;
     public double Length => Math.Sqrt(LengthSquared);
     public double LengthSquared => _element0 * _element0 + _element1 * _element1 + _element2 * _element2;
 
@@ -91,5 +108,15 @@ public class Vec3(double element0, double element1, double element2)
 
         return _element0.Equals(item._element0) && _element1.Equals(item._element1) &&
                _element2.Equals(item._element2);
+    }
+
+    protected bool Equals(Vec3 other)
+    {
+        return _element0.Equals(other._element0) && _element1.Equals(other._element1) && _element2.Equals(other._element2);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_element0, _element1, _element2);
     }
 }
