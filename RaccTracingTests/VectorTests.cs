@@ -1,4 +1,5 @@
 using RaccTracing;
+using RaccTracing.Domain.Entities;
 
 namespace RaccTracingTests;
 

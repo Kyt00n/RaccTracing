@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\RaccTracing.Domain\RaccTracing.Domain.csproj" />
       <ProjectReference Include="..\RaccTracing\RaccTracing.csproj" />
     </ItemGroup>
 
