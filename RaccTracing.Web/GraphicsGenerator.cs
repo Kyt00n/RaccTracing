@@ -48,7 +48,13 @@ public class GraphicsGenerator
             Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
             for (var i = 0; i < cameraSettings.ImageWidth; i++)
             {
-                var pixelColor = new Vec3((double)i / (imageWidth - 1), (double)j / (cameraSettings.ImageHeight - 1), 0.0);
+                var pixelCenter = cameraSettings.Pixel00Location + 
+                                  i * cameraSettings.PixelDeltaU + 
+                                  j * cameraSettings.PixelDeltaV;
+                var rayDirection = pixelCenter - cameraSettings.CameraCenter;
+                var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
+
+                var pixelColor = _colorService.RayColor(ray);
                 _colorService.WriteColor(sb, pixelColor);
             }
         }

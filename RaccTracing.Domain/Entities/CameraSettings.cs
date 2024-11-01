@@ -25,9 +25,9 @@ public class CameraSettings(
     public Vec3 PixelDeltaU => ViewportU / ImageWidth;
     public Vec3 PixelDeltaV => ViewportV / ImageHeight;
     
-    public Vec3 ViewportUpperLeft => CameraCenter - new Vec3(0,0,FocalLength) - ViewportU/2 + ViewportV/2;
+    public Vec3 ViewportUpperLeft => CameraCenter - new Vec3(0,0,FocalLength) - ViewportU/2 - ViewportV/2;
     
-    public Vec3 Pixel100Location => ViewportUpperLeft + 0.5*(PixelDeltaU + PixelDeltaV);
+    public Vec3 Pixel00Location => ViewportUpperLeft + 0.5*(PixelDeltaU + PixelDeltaV);
     
     private int CalculateImageHeight()
     {
