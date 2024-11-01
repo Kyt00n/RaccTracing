@@ -23,9 +23,13 @@ public class ColorService : IColorService
 
     public Color RayColor(Ray r)
     {
-        if (IsSphereHit(new Point3(0, 0, -1), 0.5, r))
+        var sphereCenter = new Point3(0, 0, -1);
+        var t = IsSphereHit(sphereCenter, 0.5, r);
+        if (t > 0.0)
         {
-            return Colors.Red;
+            var normal = (r.At(t) - new Vec3(0, 0, -1)).UnitVector();
+            var colorOfPixel = 0.5 * new Color(normal.X + 1, normal.Y + 1, normal.Z + 1);
+            return new Color(colorOfPixel.X, colorOfPixel.Y, colorOfPixel.Z);
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);
@@ -33,14 +37,18 @@ public class ColorService : IColorService
         return new Color(blendedValue.X, blendedValue.Y, blendedValue.Z);
     }
 
-    private static bool IsSphereHit(Point3 center, double radius, Ray r)
+    private static double IsSphereHit(Point3 center, double radius, Ray r)
     {
         var oc = center - r.Origin;
-        var a = Vec3.Dot(r.Direction, r.Direction);
-        var b = 2.0 * Vec3.Dot(oc, r.Direction);
-        var c = Vec3.Dot(oc, oc) - radius * radius;
-        var discriminant = b * b - 4 * a * c;
-        return discriminant >= 0;
+        var a = r.Direction.LengthSquared();
+        var h = Vec3.Dot(r.Direction, oc);
+        var c = oc.LengthSquared() - radius * radius;
+        var discriminant = h * h - a * c;
+        if (discriminant < 0)
+        {
+            return -1.0;
+        }
+        return (h - Math.Sqrt(discriminant)) / a;
     }
     
     private static int Round(double value)
