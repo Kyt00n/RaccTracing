@@ -43,3 +43,5 @@ Length is calculated using Pythagoras' theorem
 
 ### UnitVector method 
 The `UnitVector` method returns a unit vector, i.e. a vector of length one, indicating the direction and return of some initial vector to which this vector is assigned. Multiplying the unit vector by the length of the initial vector reconstructs the initial vector. 
+## Color and Point3 Classes
+Both classes are aliases of Vec3 class.
