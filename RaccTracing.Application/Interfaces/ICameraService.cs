@@ -4,8 +4,8 @@ using RaccTracing.Domain.Entities.Hittable;
 
 namespace RaccTracing.Application.Interfaces;
 
-public interface IColorService
+public interface ICameraService
 {
-    void WriteColor(StringBuilder output, Vec3 pixelColor);
-    Color RayColor(Ray r, Hittable world);
+    void Render(StringBuilder output, Hittable world, CameraSettings cameraSettings);
+    
 }

@@ -10,23 +10,22 @@ namespace RaccTracing.Web;
 
 public class GraphicsGenerator
 {
-    private readonly IColorService _colorService;
+    private readonly ICameraService _cameraService;
     private readonly IConfiguration _configuration;
 
-    public GraphicsGenerator(IColorService colorService, IConfiguration configuration)
+    public GraphicsGenerator(ICameraService cameraService, IConfiguration configuration)
     {
-        _colorService = colorService;
+        _cameraService = cameraService;
         _configuration = configuration;
     }
 
-    public void GenerateImage(string filePath)
+    public CameraSettings InitializeCameraSettings()
     {
         var renderImageSetup = _configuration.GetSection(nameof(RenderImageSetup)).Get<RenderImageSetup>();
         if (renderImageSetup == null)
         {
             throw new Exception("RenderImageSetup is not configured");
         }
-        
         var cameraSettings = new CameraSettings
         {
             ImageWidth = renderImageSetup.ImageWidth,
@@ -39,31 +38,19 @@ public class GraphicsGenerator
                 renderImageSetup.CameraCenter.Z
             ),
         };
-        
-        //TODO: Move to a service
+        return cameraSettings;
+    }
+    public void GenerateImage(string filePath)
+    {
+        var cameraSettings = InitializeCameraSettings();
         StringBuilder sb = new();
-        sb.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
+        
         HittableList world = new();
         world.Add(new Sphere(new Point3(0, 0, -1), 0.5));
         world.Add(new Sphere(new Point3(0, -100.5, -1), 100));
         
-        for (var j = 0; j < cameraSettings.ImageHeight; j++)
-        {
-            Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
-            for (var i = 0; i < cameraSettings.ImageWidth; i++)
-            {
-                var pixelCenter = cameraSettings.Pixel00Location + 
-                                  i * cameraSettings.PixelDeltaU + 
-                                  j * cameraSettings.PixelDeltaV;
-                var rayDirection = pixelCenter - cameraSettings.CameraCenter;
-                var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
-
-                var pixelColor = _colorService.RayColor(ray, world);
-                _colorService.WriteColor(sb, pixelColor);
-            }
-        }
-
-        Console.WriteLine("Done");
+        _cameraService.Render(sb, world, cameraSettings);
+        
         File.WriteAllText(filePath, sb.ToString());
         Console.WriteLine($"Output saved to {filePath}");
     }

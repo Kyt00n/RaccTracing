@@ -10,7 +10,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var serviceProvider = new ServiceCollection()
-    .AddSingleton<IColorService, ColorService>()
+    .AddSingleton<ICameraService, CameraService>()
     .AddSingleton<IConfiguration>(configuration)
     .AddSingleton<GraphicsGenerator>()
     .BuildServiceProvider();
