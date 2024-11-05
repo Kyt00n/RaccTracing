@@ -7,9 +7,31 @@ using RaccTracing.Domain.Entities.Hittable;
 
 namespace RaccTracing.Infrastructure.Services;
 
-public class ColorService : IColorService
+public class CameraService : ICameraService
 {
-    public void WriteColor(StringBuilder output, Vec3 pixelColor)
+    public void Render(StringBuilder output, Hittable world, CameraSettings cameraSettings)
+    {
+        output.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
+        
+        for (var j = 0; j < cameraSettings.ImageHeight; j++)
+        {
+            Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
+            for (var i = 0; i < cameraSettings.ImageWidth; i++)
+            {
+                var pixelCenter = cameraSettings.Pixel00Location + 
+                                  i * cameraSettings.PixelDeltaU + 
+                                  j * cameraSettings.PixelDeltaV;
+                var rayDirection = pixelCenter - cameraSettings.CameraCenter;
+                var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
+
+                var pixelColor = RayColor(ray, world);
+                WriteColor(output, pixelColor);
+            }
+        }
+        Console.WriteLine("Done");
+    }
+
+    private void WriteColor(StringBuilder output, Vec3 pixelColor)
     {
         
         var r = pixelColor.X;
@@ -23,7 +45,7 @@ public class ColorService : IColorService
         output.AppendLine($"{rByte} {gByte} {bByte}");
     }
 
-    public Color RayColor(Ray r, Hittable world)
+    private Color RayColor(Ray r, Hittable world)
     {
         HitRecord rec = new();
         if (world.Hit(r, new Interval(0, Constants.Infinity), ref rec))
