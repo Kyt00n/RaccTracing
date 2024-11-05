@@ -1,7 +1,10 @@
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using RaccTracing.Application.Interfaces;
+using RaccTracing.Domain.Configuration;
 using RaccTracing.Domain.Entities;
+using RaccTracing.Domain.Entities.Hittable;
+using RaccTracing.Domain.Entities.Objects;
 
 namespace RaccTracing.Web;
 
@@ -18,31 +21,32 @@ public class GraphicsGenerator
 
     public void GenerateImage(string filePath)
     {
-        //TODO: Refactor this to use a model and a mapper
-        var renderImageSetup = _configuration.GetSection("RenderImageSetup");
-        var imageWidth = renderImageSetup.GetValue<int>("ImageWidth");
-        var aspectRatio = renderImageSetup.GetValue<double>("AspectRatio");
-        var focalLength = renderImageSetup.GetValue<double>("FocalLength");
-        var viewportHeight = renderImageSetup.GetValue<double>("ViewPortHeight");
-        var cameraCenterSection = renderImageSetup.GetSection("CameraCenter");
-        var cameraCenter = new Point3(
-            cameraCenterSection.GetValue<double>("X"),
-            cameraCenterSection.GetValue<double>("Y"),
-            cameraCenterSection.GetValue<double>("Z")
-        );
-
+        var renderImageSetup = _configuration.GetSection(nameof(RenderImageSetup)).Get<RenderImageSetup>();
+        if (renderImageSetup == null)
+        {
+            throw new Exception("RenderImageSetup is not configured");
+        }
+        
         var cameraSettings = new CameraSettings
         {
-            ImageWidth = imageWidth,
-            AspectRatio = aspectRatio,
-            FocalLength = focalLength,
-            ViewportHeight = viewportHeight,
-            CameraCenter = cameraCenter
+            ImageWidth = renderImageSetup.ImageWidth,
+            AspectRatio = renderImageSetup.AspectRatio,
+            FocalLength = renderImageSetup.FocalLength,
+            ViewportHeight = renderImageSetup.ViewPortHeight,
+            CameraCenter = new Point3(
+                renderImageSetup.CameraCenter.X,
+                renderImageSetup.CameraCenter.Y,
+                renderImageSetup.CameraCenter.Z
+            ),
         };
+        
         //TODO: Move to a service
         StringBuilder sb = new();
         sb.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
-
+        HittableList world = new();
+        world.Add(new Sphere(new Point3(0, 0, -1), 0.5));
+        world.Add(new Sphere(new Point3(0, -100.5, -1), 100));
+        
         for (var j = 0; j < cameraSettings.ImageHeight; j++)
         {
             Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
@@ -54,7 +58,7 @@ public class GraphicsGenerator
                 var rayDirection = pixelCenter - cameraSettings.CameraCenter;
                 var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
 
-                var pixelColor = _colorService.RayColor(ray);
+                var pixelColor = _colorService.RayColor(ray, world);
                 _colorService.WriteColor(sb, pixelColor);
             }
         }

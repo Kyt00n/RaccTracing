@@ -12,17 +12,19 @@ public class Vec3()
         Y = y;
         Z = z;
     }
-    
+    private const double Tolerance = 1e-10;
+
     //Equality
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj == null || GetType() != obj.GetType())
         {
             return false;
         }
         var v = (Vec3)obj;
-        return X == v.X && Y == v.Y && Z == v.Z;
-    }
+        return Math.Abs(X - v.X) < Tolerance &&
+               Math.Abs(Y - v.Y) < Tolerance &&
+               Math.Abs(Z - v.Z) < Tolerance;    }
     
     public override int GetHashCode()
     {
