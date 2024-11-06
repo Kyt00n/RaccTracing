@@ -18,4 +18,5 @@ public class Interval
     public double Size => Max - Min;
     public bool Contains(double value) => value >= Min && value <= Max;
     public bool Surrounds(double value) => value > Min && value < Max;
+    public double Clamp(double value) => Math.Max(Min, Math.Min(Max, value));
 }

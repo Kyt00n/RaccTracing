@@ -5,9 +5,10 @@ public class CameraSettings(
     double aspectRatio,
     double focalLength,
     double viewportHeight,
+    int samplesPerPixel,
     Point3 cameraCenter)
 {
-    public CameraSettings() : this(0, 0.0, 0.0, 0.0, new Point3(0, 0, 0))
+    public CameraSettings() : this(0, 0.0, 0.0, 0.0, 1,new Point3(0, 0, 0))
     {
     }
 
@@ -15,8 +16,9 @@ public class CameraSettings(
     public double AspectRatio { get; init; } = aspectRatio;
     public double FocalLength { get; init; } = focalLength;
     public double ViewportHeight { get; init; } = viewportHeight;
+    public int SamplesPerPixel { get; init; } = samplesPerPixel;
     public Point3 CameraCenter { get; init; } = cameraCenter;
-
+    
 
     public int ImageHeight => CalculateImageHeight();
     public double ViewportWidth  => ViewportHeight * ((double)ImageWidth/ImageHeight);
@@ -28,6 +30,8 @@ public class CameraSettings(
     public Vec3 ViewportUpperLeft => CameraCenter - new Vec3(0,0,FocalLength) - ViewportU/2 - ViewportV/2;
     
     public Vec3 Pixel00Location => ViewportUpperLeft + 0.5*(PixelDeltaU + PixelDeltaV);
+    
+    public double PixelSamplesScale => 1.0 / SamplesPerPixel;
     
     private int CalculateImageHeight()
     {
