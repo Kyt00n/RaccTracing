@@ -9,6 +9,8 @@ namespace RaccTracing.Infrastructure.Services;
 
 public class CameraService : ICameraService
 {
+    //TODO: move camera settings to constructor
+    //TODO: fix converting vec3 color and point3
     public void Render(StringBuilder output, Hittable world, CameraSettings cameraSettings)
     {
         output.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
@@ -18,14 +20,13 @@ public class CameraService : ICameraService
             Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
             for (var i = 0; i < cameraSettings.ImageWidth; i++)
             {
-                var pixelCenter = cameraSettings.Pixel00Location + 
-                                  i * cameraSettings.PixelDeltaU + 
-                                  j * cameraSettings.PixelDeltaV;
-                var rayDirection = pixelCenter - cameraSettings.CameraCenter;
-                var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
-
-                var pixelColor = RayColor(ray, world);
-                WriteColor(output, pixelColor);
+                var pixelColor = new Color(0, 0, 0);
+                for (int sample = 0; sample < cameraSettings.SamplesPerPixel; sample++)
+                {
+                    var ray = GetRay(i, j, cameraSettings);
+                    var rayColor = RayColor(ray, world);
+                    pixelColor += RayColor(ray, world);
+                }
             }
         }
         Console.WriteLine("Done");
@@ -37,14 +38,32 @@ public class CameraService : ICameraService
         var r = pixelColor.X;
         var g = pixelColor.Y;
         var b = pixelColor.Z;
-
-        var rByte = Round(r);
-        var gByte = Round(g);
-        var bByte = Round(b);
+        
+        var intensity = new Interval(0.000, 0.999);
+        
+        var rByte = Round(intensity.Clamp(r));
+        var gByte = Round(intensity.Clamp(g));
+        var bByte = Round(intensity.Clamp(b));
 
         output.AppendLine($"{rByte} {gByte} {bByte}");
     }
 
+    private Ray GetRay(int i, int j, CameraSettings cameraSettings)
+    {
+        var offset = SampleSquare();
+        var pixelSample = cameraSettings.Pixel00Location
+            + ((i + offset.X) * cameraSettings.PixelDeltaU)
+            + ((j + offset.Y) * cameraSettings.PixelDeltaV);
+        var rayOrigin = cameraSettings.CameraCenter;
+        var rayDirection = pixelSample - rayOrigin;
+        
+        return new Ray(rayOrigin, rayDirection);
+    }
+    private Vec3 SampleSquare()
+    {
+        // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+        return new Vec3(Constants.RandomDouble()-0.5, Constants.RandomDouble()-0.5, 0);
+    }
     private Color RayColor(Ray r, Hittable world)
     {
         HitRecord rec = new();
@@ -61,6 +80,6 @@ public class CameraService : ICameraService
     
     private static int Round(double value)
     {
-        return (int)(255.999 * value);
+        return (int)(256 * value);
     }
 }
