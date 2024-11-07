@@ -1,5 +1,5 @@
-namespace RaccTracing.Domain.Entities;
 
+namespace RaccTracing.Domain.Entities;
 public class Vec3()
 {
     public double X { get; set; }

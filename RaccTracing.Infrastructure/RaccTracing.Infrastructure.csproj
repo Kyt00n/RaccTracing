@@ -9,5 +9,8 @@
     <ItemGroup>
       <ProjectReference Include="..\RaccTracing.Application\RaccTracing.Application.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <Compile Include="../RaccTracing.Domain/SharedGlobalUsings.cs" Link="SharedGlobalUsings.cs" />
+    </ItemGroup>
 </Project>

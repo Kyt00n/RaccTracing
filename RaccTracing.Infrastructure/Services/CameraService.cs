@@ -9,23 +9,30 @@ namespace RaccTracing.Infrastructure.Services;
 
 public class CameraService : ICameraService
 {
-    public void Render(StringBuilder output, Hittable world, CameraSettings cameraSettings)
-    {
-        output.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
-        
-        for (var j = 0; j < cameraSettings.ImageHeight; j++)
-        {
-            Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
-            for (var i = 0; i < cameraSettings.ImageWidth; i++)
-            {
-                var pixelCenter = cameraSettings.Pixel00Location + 
-                                  i * cameraSettings.PixelDeltaU + 
-                                  j * cameraSettings.PixelDeltaV;
-                var rayDirection = pixelCenter - cameraSettings.CameraCenter;
-                var ray = new Ray(cameraSettings.CameraCenter, rayDirection);
+    private readonly CameraSettings _cameraSettings;
 
-                var pixelColor = RayColor(ray, world);
-                WriteColor(output, pixelColor);
+    public CameraService(CameraSettings cameraSettings)
+    {
+        _cameraSettings = cameraSettings;
+    }
+
+    //TODO: move camera settings to constructor
+    public void Render(StringBuilder output, Hittable world)
+    {
+        output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
+        
+        for (var j = 0; j < _cameraSettings.ImageHeight; j++)
+        {
+            Console.WriteLine($"Scan lines remaining: {_cameraSettings.ImageHeight - j}");
+            for (var i = 0; i < _cameraSettings.ImageWidth; i++)
+            {
+                var pixelColor = new Color(0, 0, 0);
+                for (int sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
+                {
+                    var ray = GetRay(i, j);
+                    pixelColor += RayColor(ray, world);
+                }
+                WriteColor(output, pixelColor*_cameraSettings.PixelSamplesScale);
             }
         }
         Console.WriteLine("Done");
@@ -37,30 +44,46 @@ public class CameraService : ICameraService
         var r = pixelColor.X;
         var g = pixelColor.Y;
         var b = pixelColor.Z;
-
-        var rByte = Round(r);
-        var gByte = Round(g);
-        var bByte = Round(b);
+        
+        var intensity = new Interval(0.000, 0.999);
+        
+        var rByte = Round(intensity.Clamp(r));
+        var gByte = Round(intensity.Clamp(g));
+        var bByte = Round(intensity.Clamp(b));
 
         output.AppendLine($"{rByte} {gByte} {bByte}");
     }
 
+    private Ray GetRay(int i, int j)
+    {
+        var offset = SampleSquare();
+        var pixelSample = _cameraSettings.Pixel00Location
+            + ((i + offset.X) * _cameraSettings.PixelDeltaU)
+            + ((j + offset.Y) * _cameraSettings.PixelDeltaV);
+        var rayOrigin = _cameraSettings.CameraCenter;
+        var rayDirection = pixelSample - rayOrigin;
+        
+        return new Ray(rayOrigin, rayDirection);
+    }
+    private Vec3 SampleSquare()
+    {
+        // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+        return new Vec3(Constants.RandomDouble()-0.5, Constants.RandomDouble()-0.5, 0);
+    }
     private Color RayColor(Ray r, Hittable world)
     {
         HitRecord rec = new();
         if (world.Hit(r, new Interval(0, Constants.Infinity), ref rec))
         {
-            var colorVec3 = 0.5 * (rec.Normal + new Color(1,1,1));
-            return new Color(colorVec3.X, colorVec3.Y, colorVec3.Z);
+            return 0.5 * (rec.Normal + new Color(1,1,1));
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);
-        var blendedValue = (1.0-a) * Colors.White + a * Colors.LightBlue;
-        return new Color(blendedValue.X, blendedValue.Y, blendedValue.Z);
+        return (1.0-a) * Colors.White + a * Colors.LightBlue;
     }
     
     private static int Round(double value)
     {
-        return (int)(255.999 * value);
+        return (int)(256 * value);
     }
 }

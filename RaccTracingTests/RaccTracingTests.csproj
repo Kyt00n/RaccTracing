@@ -28,5 +28,8 @@
       <ProjectReference Include="..\RaccTracing.Infrastructure\RaccTracing.Infrastructure.csproj" />
       <ProjectReference Include="..\RaccTracing\RaccTracing.csproj" />
     </ItemGroup>
+    <ItemGroup>
+        <Compile Include="../RaccTracing.Domain/SharedGlobalUsings.cs" Link="SharedGlobalUsings.cs" />
+    </ItemGroup>
 
 </Project>

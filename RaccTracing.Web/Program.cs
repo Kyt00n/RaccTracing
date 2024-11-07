@@ -12,6 +12,8 @@ var configuration = new ConfigurationBuilder()
 var serviceProvider = new ServiceCollection()
     .AddSingleton<ICameraService, CameraService>()
     .AddSingleton<IConfiguration>(configuration)
+    .AddSingleton<CameraSettingsInitializer>()
+    .AddSingleton(provider => provider.GetRequiredService<CameraSettingsInitializer>().CameraSettings)
     .AddSingleton<GraphicsGenerator>()
     .BuildServiceProvider();
 
