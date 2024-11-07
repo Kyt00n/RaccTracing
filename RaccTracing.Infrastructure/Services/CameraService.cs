@@ -16,7 +16,6 @@ public class CameraService : ICameraService
         _cameraSettings = cameraSettings;
     }
 
-    //TODO: move camera settings to constructor
     public void Render(StringBuilder output, Hittable world)
     {
         output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
@@ -30,7 +29,7 @@ public class CameraService : ICameraService
                 for (int sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
                 {
                     var ray = GetRay(i, j);
-                    pixelColor += RayColor(ray, world);
+                    pixelColor += RayColor(ray,_cameraSettings.MaxDepth ,world);
                 }
                 WriteColor(output, pixelColor*_cameraSettings.PixelSamplesScale);
             }
@@ -70,12 +69,17 @@ public class CameraService : ICameraService
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
         return new Vec3(Constants.RandomDouble()-0.5, Constants.RandomDouble()-0.5, 0);
     }
-    private Color RayColor(Ray r, Hittable world)
+    private Color RayColor(Ray r,int depth ,Hittable world)
     {
-        HitRecord rec = new();
-        if (world.Hit(r, new Interval(0, Constants.Infinity), ref rec))
+        if (depth <= 0)
         {
-            return 0.5 * (rec.Normal + new Color(1,1,1));
+            return Colors.Black;
+        }
+        HitRecord rec = new();
+        if (world.Hit(r, new Interval(0.001, Constants.Infinity), ref rec))
+        {
+            var direction = Vec3.RandomOnHemisphere(rec.Normal);
+            return 0.5 * RayColor(new Ray(rec.P, direction),depth-1, world);
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);

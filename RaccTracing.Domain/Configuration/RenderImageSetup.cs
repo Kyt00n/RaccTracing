@@ -7,5 +7,6 @@ public class RenderImageSetup
     public double FocalLength { get; set; }
     public double ViewPortHeight { get; set; }
     public int SamplesPerPixel { get; set; }
+    public int MaxDepth { get; set; }
     public CameraCenterSetup CameraCenter { get; set; }
 }
