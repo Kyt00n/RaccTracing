@@ -9,24 +9,30 @@ namespace RaccTracing.Infrastructure.Services;
 
 public class CameraService : ICameraService
 {
-    //TODO: move camera settings to constructor
-    //TODO: fix converting vec3 color and point3
-    public void Render(StringBuilder output, Hittable world, CameraSettings cameraSettings)
+    private readonly CameraSettings _cameraSettings;
+
+    public CameraService(CameraSettings cameraSettings)
     {
-        output.Append($"P3\n{cameraSettings.ImageWidth} {cameraSettings.ImageHeight}\n255\n");
+        _cameraSettings = cameraSettings;
+    }
+
+    //TODO: move camera settings to constructor
+    public void Render(StringBuilder output, Hittable world)
+    {
+        output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
         
-        for (var j = 0; j < cameraSettings.ImageHeight; j++)
+        for (var j = 0; j < _cameraSettings.ImageHeight; j++)
         {
-            Console.WriteLine($"Scan lines remaining: {cameraSettings.ImageHeight - j}");
-            for (var i = 0; i < cameraSettings.ImageWidth; i++)
+            Console.WriteLine($"Scan lines remaining: {_cameraSettings.ImageHeight - j}");
+            for (var i = 0; i < _cameraSettings.ImageWidth; i++)
             {
                 var pixelColor = new Color(0, 0, 0);
-                for (int sample = 0; sample < cameraSettings.SamplesPerPixel; sample++)
+                for (int sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
                 {
-                    var ray = GetRay(i, j, cameraSettings);
-                    var rayColor = RayColor(ray, world);
+                    var ray = GetRay(i, j);
                     pixelColor += RayColor(ray, world);
                 }
+                WriteColor(output, pixelColor*_cameraSettings.PixelSamplesScale);
             }
         }
         Console.WriteLine("Done");
@@ -48,13 +54,13 @@ public class CameraService : ICameraService
         output.AppendLine($"{rByte} {gByte} {bByte}");
     }
 
-    private Ray GetRay(int i, int j, CameraSettings cameraSettings)
+    private Ray GetRay(int i, int j)
     {
         var offset = SampleSquare();
-        var pixelSample = cameraSettings.Pixel00Location
-            + ((i + offset.X) * cameraSettings.PixelDeltaU)
-            + ((j + offset.Y) * cameraSettings.PixelDeltaV);
-        var rayOrigin = cameraSettings.CameraCenter;
+        var pixelSample = _cameraSettings.Pixel00Location
+            + ((i + offset.X) * _cameraSettings.PixelDeltaU)
+            + ((j + offset.Y) * _cameraSettings.PixelDeltaV);
+        var rayOrigin = _cameraSettings.CameraCenter;
         var rayDirection = pixelSample - rayOrigin;
         
         return new Ray(rayOrigin, rayDirection);
@@ -69,13 +75,11 @@ public class CameraService : ICameraService
         HitRecord rec = new();
         if (world.Hit(r, new Interval(0, Constants.Infinity), ref rec))
         {
-            var colorVec3 = 0.5 * (rec.Normal + new Color(1,1,1));
-            return new Color(colorVec3.X, colorVec3.Y, colorVec3.Z);
+            return 0.5 * (rec.Normal + new Color(1,1,1));
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);
-        var blendedValue = (1.0-a) * Colors.White + a * Colors.LightBlue;
-        return new Color(blendedValue.X, blendedValue.Y, blendedValue.Z);
+        return (1.0-a) * Colors.White + a * Colors.LightBlue;
     }
     
     private static int Round(double value)
