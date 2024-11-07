@@ -16,7 +16,6 @@ public class CameraService : ICameraService
         _cameraSettings = cameraSettings;
     }
 
-    //TODO: move camera settings to constructor
     public void Render(StringBuilder output, Hittable world)
     {
         output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
@@ -75,7 +74,8 @@ public class CameraService : ICameraService
         HitRecord rec = new();
         if (world.Hit(r, new Interval(0, Constants.Infinity), ref rec))
         {
-            return 0.5 * (rec.Normal + new Color(1,1,1));
+            var direction = Vec3.RandomOnHemisphere(rec.Normal);
+            return 0.5 * RayColor(new Ray(rec.P, direction), world);
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);

@@ -1,4 +1,4 @@
-
+using Constant = RaccTracing.Domain.Constants.Constants;
 namespace RaccTracing.Domain.Entities;
 public class Vec3()
 {
@@ -100,6 +100,43 @@ public class Vec3()
     public Vec3 UnitVector()
     {
         return this / Length();
+    }
+
+    public static Vec3 RandomOnHemisphere(Vec3 normal)
+    {
+        var onUnitSphere = RandomUnitVector();
+        if (Dot(onUnitSphere, normal) > 0.0)
+        {
+            return onUnitSphere;
+        }
+        return -onUnitSphere;
+    }
+
+    private static Vec3 RandomUnitVector()
+    {
+        return RandomInUnitSphere().UnitVector();
+    }
+
+    private static Vec3 RandomInUnitSphere()
+    {
+        while (true)
+        {
+            var p = Random(-1, 1);
+            if (p.LengthSquared() >= 1)
+            {
+                continue;
+            }
+            return p;
+        }
+    }
+    public static Vec3 Random()
+    {
+        return new Vec3(Constant.RandomDouble(), Constant.RandomDouble(), Constant.RandomDouble());
+    }
+    
+    public static Vec3 Random(double min, double max)
+    {
+        return new Vec3(Constant.RandomDouble(min, max), Constant.RandomDouble(min, max), Constant.RandomDouble(min, max));
     }
     
     public double this[int i]
