@@ -6,9 +6,10 @@ public class CameraSettings(
     double focalLength,
     double viewportHeight,
     int samplesPerPixel,
+    int maxDepth,
     Point3 cameraCenter)
 {
-    public CameraSettings() : this(0, 0.0, 0.0, 0.0, 1,new Point3(0, 0, 0))
+    public CameraSettings() : this(0, 0.0, 0.0, 0.0, 1,1,new Point3(0, 0, 0))
     {
     }
 
@@ -17,6 +18,7 @@ public class CameraSettings(
     public double FocalLength { get; init; } = focalLength;
     public double ViewportHeight { get; init; } = viewportHeight;
     public int SamplesPerPixel { get; init; } = samplesPerPixel;
+    public int MaxDepth { get; init; } = maxDepth;
     public Point3 CameraCenter { get; init; } = cameraCenter;
     
 

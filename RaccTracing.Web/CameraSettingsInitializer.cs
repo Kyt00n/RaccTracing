@@ -22,6 +22,7 @@ public class CameraSettingsInitializer
             FocalLength = renderImageSetup.FocalLength,
             ViewportHeight = renderImageSetup.ViewPortHeight,
             SamplesPerPixel = renderImageSetup.SamplesPerPixel,
+            MaxDepth = renderImageSetup.MaxDepth,
             CameraCenter = new Point3(
                 renderImageSetup.CameraCenter.X,
                 renderImageSetup.CameraCenter.Y,
