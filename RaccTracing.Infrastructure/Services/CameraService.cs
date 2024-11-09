@@ -36,13 +36,16 @@ public class CameraService : ICameraService
         }
         Console.WriteLine("Done");
     }
-
+    private double LinearToGamma(double linear)
+    {
+        return linear < 0.0 ? 0.0 : Math.Sqrt(linear);
+    }
     private void WriteColor(StringBuilder output, Vec3 pixelColor)
     {
         
-        var r = pixelColor.X;
-        var g = pixelColor.Y;
-        var b = pixelColor.Z;
+        var r = LinearToGamma(pixelColor.X);
+        var g = LinearToGamma(pixelColor.Y);
+        var b = LinearToGamma(pixelColor.Z);
         
         var intensity = new Interval(0.000, 0.999);
         
