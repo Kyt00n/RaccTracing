@@ -112,7 +112,7 @@ public class Vec3()
         return -onUnitSphere;
     }
 
-    private static Vec3 RandomUnitVector()
+    public static Vec3 RandomUnitVector()
     {
         return RandomInUnitSphere().UnitVector();
     }
