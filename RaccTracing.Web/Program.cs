@@ -20,7 +20,6 @@ var serviceProvider = new ServiceCollection()
 var graphicsGenerator = serviceProvider.GetService<GraphicsGenerator>();
 
 var currentDirectory = Directory.GetCurrentDirectory();
-var filePath = Path.Combine(currentDirectory, "image.ppm");
-
+var filePath = args.Length == 0 ? Path.Combine(currentDirectory, "image.ppm") : args[0];
 
 graphicsGenerator?.GenerateImage(filePath);

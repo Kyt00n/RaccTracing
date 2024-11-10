@@ -1,0 +1,71 @@
+name: Generate and Upload PPM Image
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    
+permissions: 
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+  checks: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore RaccTracing.Web/RaccTracing.Web.csproj
+
+      - name: Build
+        run: dotnet build RaccTracing.Web/RaccTracing.Web.csproj --no-restore
+
+      - name: Create output directory
+        run: mkdir -p $GITHUB_WORKSPACE/output
+        
+      - name: Run application to generate PPM image
+        working-directory: RaccTracing.Web
+        run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
+        
+      - name: Install ImageMagick
+        run: sudo apt-get install -y imagemagick
+
+      - name: Convert PPM to PNG
+        run: convert $GITHUB_WORKSPACE/output/image.ppm $GITHUB_WORKSPACE/output/image.png
+          
+      - name: Upload PNG image
+        uses: actions/upload-artifact@v3
+        with:
+          name: png-image
+          path: output/image.png
+
+  comment:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download PNG image
+        uses: actions/download-artifact@v3
+        with:
+          name: png-image
+          path: $GITHUB_WORKSPACE/output
+
+      - name: Post comment with PNG image
+        uses: edunad/actions-image@v2.0.3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: $GITHUB_WORKSPACE/output/image.png
+          title: 'PNG Image'
