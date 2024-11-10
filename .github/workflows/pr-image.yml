@@ -30,6 +30,9 @@ jobs:
         working-directory: RaccTracing.Web
         run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
         
+      - name: List files in output directory
+        run: ls $GITHUB_WORKSPACE/output
+          
       - name: Upload PPM image
         uses: actions/upload-artifact@v3
         with:
