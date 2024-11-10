@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ppm-image
-          path: $GITHUB_WORKSPACE/output/image.ppm
+          path: output/image.ppm
 
   comment:
     needs: build
