@@ -48,7 +48,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ppm-image
-          path: .
+          path: $GITHUB_WORKSPACE/output
 
       - name: Post comment with PPM image
         uses: peter-evans/create-or-update-comment@v3
