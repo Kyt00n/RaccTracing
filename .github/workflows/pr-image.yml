@@ -24,9 +24,9 @@ jobs:
         run: dotnet build RaccTracing.Web/RaccTracing.Web.csproj --no-restore
 
       - name: Run application to generate PPM image
-        run: dotnet run --project RaccTracing.Web/RaccTracing.Web.csproj $GITHUB_WORKSPACE/output/image.ppm
         working-directory: RaccTracing.Web
-
+        run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
+        
       - name: Upload PPM image
         uses: actions/upload-artifact@v3
         with:
