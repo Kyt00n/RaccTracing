@@ -23,6 +23,9 @@ jobs:
       - name: Build
         run: dotnet build RaccTracing.Web/RaccTracing.Web.csproj --no-restore
 
+      - name: Create output directory
+        run: mkdir -p $GITHUB_WORKSPACE/output
+        
       - name: Run application to generate PPM image
         working-directory: RaccTracing.Web
         run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
