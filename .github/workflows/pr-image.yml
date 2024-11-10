@@ -41,7 +41,7 @@ jobs:
       - name: Convert PPM to PNG
         run: convert $GITHUB_WORKSPACE/output/image.ppm $GITHUB_WORKSPACE/output/image.png
           
-      - name: Upload PPM image
+      - name: Upload PNG image
         uses: actions/upload-artifact@v3
         with:
           name: png-image
@@ -62,10 +62,8 @@ jobs:
           path: $GITHUB_WORKSPACE/output
 
       - name: Post comment with PNG image
-        uses: peter-evans/create-or-update-comment@v3
+        uses: edunad/actions-image@v2.0.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ![Generated PNG Image]($GITHUB_WORKSPACE/output/image.png)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: $GITHUB_WORKSPACE/output/image.png
+          title: 'PNG Image'
