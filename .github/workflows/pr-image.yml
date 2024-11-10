@@ -35,14 +35,17 @@ jobs:
         working-directory: RaccTracing.Web
         run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
         
-      - name: List files in output directory
-        run: ls $GITHUB_WORKSPACE/output
+      - name: Install ImageMagick
+        run: sudo apt-get install -y imagemagick
+
+      - name: Convert PPM to PNG
+        run: convert $GITHUB_WORKSPACE/output/image.ppm $GITHUB_WORKSPACE/output/image.png
           
       - name: Upload PPM image
         uses: actions/upload-artifact@v3
         with:
-          name: ppm-image
-          path: output/image.ppm
+          name: png-image
+          path: output/image.png
 
   comment:
     needs: build
@@ -52,17 +55,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download PPM image
+      - name: Download PNG image
         uses: actions/download-artifact@v3
         with:
-          name: ppm-image
+          name: png-image
           path: $GITHUB_WORKSPACE/output
 
-      - name: Post comment with PPM image
+      - name: Post comment with PNG image
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ![Generated PPM Image]($GITHUB_WORKSPACE/output/image.ppm)
+            ![Generated PNG Image]($GITHUB_WORKSPACE/output/image.png)
