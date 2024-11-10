@@ -64,7 +64,7 @@ jobs:
           path: $GITHUB_WORKSPACE/output
 
       - name: Post comment with PNG image
-        uses: edunad/actions-image@v2.0.0
+        uses: edunad/actions-image@v2.0.3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           path: $GITHUB_WORKSPACE/output/image.png
