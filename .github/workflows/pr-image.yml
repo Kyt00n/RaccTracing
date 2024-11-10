@@ -1,0 +1,56 @@
+name: Generate and Upload PPM Image
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Run application to generate PPM image
+        run: dotnet run --project RaccTracing.Web $GITHUB_WORKSPACE/output/image.ppm
+
+      - name: Upload PPM image
+        uses: actions/upload-artifact@v3
+        with:
+          name: ppm-image
+          path: $GITHUB_WORKSPACE/output/image.ppm
+
+  comment:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Download PPM image
+        uses: actions/download-artifact@v3
+        with:
+          name: ppm-image
+          path: .
+
+      - name: Post comment with PPM image
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ![Generated PPM Image]($GITHUB_WORKSPACE/output/image.ppm)
