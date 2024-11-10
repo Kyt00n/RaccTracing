@@ -67,6 +67,11 @@ public class Vec3()
         return new Vec3(a * b.X, a * b.Y, a * b.Z);
     }
     
+    public static Vec3 operator *(Vec3 a, Vec3 b)
+    {
+        return new Vec3(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+    }
+    
     public static Vec3 operator /(Vec3 a, double b)
     {
         return new Vec3(a.X / b, a.Y / b, a.Z / b);
@@ -137,6 +142,16 @@ public class Vec3()
     public static Vec3 Random(double min, double max)
     {
         return new Vec3(Constant.RandomDouble(min, max), Constant.RandomDouble(min, max), Constant.RandomDouble(min, max));
+    }
+    
+    public bool NearZero()
+    {
+        return Math.Abs(X) < Tolerance && Math.Abs(Y) < Tolerance && Math.Abs(Z) < Tolerance;
+    }
+    
+    public static Vec3 Reflect(Vec3 v, Vec3 n)
+    {
+        return v - 2 * Dot(v, n) * n;
     }
     
     public double this[int i]
