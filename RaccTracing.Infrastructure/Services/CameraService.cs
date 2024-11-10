@@ -81,8 +81,11 @@ public class CameraService : ICameraService
         HitRecord rec = new();
         if (world.Hit(r, new Interval(0.001, Constants.Infinity), ref rec))
         {
-            var direction = rec.Normal + Vec3.RandomUnitVector();
-            return 0.5 * RayColor(new Ray(rec.P, direction),depth-1, world);
+            if (rec.Material.Scatter(r, rec, out var attenuation, out var scattered))
+            {
+                return attenuation * RayColor(scattered, depth - 1, world);
+            }
+            return Colors.Black;
         }
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);
