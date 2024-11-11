@@ -8,6 +8,8 @@ public class RenderImageSetup
     public int SamplesPerPixel { get; set; }
     public int MaxDepth { get; set; }
     public double VerticalFov { get; set; }
+    public double DefocusAngle { get; set; }
+    public double FocusDistance { get; set; }
     public LookFromSetup LookFrom { get; set; }
     public LookAtSetup LookAt { get; set; }
     public VUpSetup Up { get; set; }

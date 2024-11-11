@@ -22,6 +22,8 @@ public class CameraSettingsInitializer
             SamplesPerPixel = renderImageSetup.SamplesPerPixel,
             VerticalFov = renderImageSetup.VerticalFov,
             MaxDepth = renderImageSetup.MaxDepth,
+            DefocusAngle = renderImageSetup.DefocusAngle,
+            FocusDistance = renderImageSetup.FocusDistance,
             LookFrom = new Point3(
                 renderImageSetup.LookFrom.X,
                 renderImageSetup.LookFrom.Y,

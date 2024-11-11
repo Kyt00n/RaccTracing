@@ -36,11 +36,11 @@ public class CameraService : ICameraService
         }
         Console.WriteLine("Done");
     }
-    private double LinearToGamma(double linear)
+    private static double LinearToGamma(double linear)
     {
         return linear < 0.0 ? 0.0 : Math.Sqrt(linear);
     }
-    private void WriteColor(StringBuilder output, Vec3 pixelColor)
+    private static void WriteColor(StringBuilder output, Vec3 pixelColor)
     {
         
         var r = LinearToGamma(pixelColor.X);
@@ -62,7 +62,9 @@ public class CameraService : ICameraService
         var pixelSample = _cameraSettings.Pixel00Location
             + ((i + offset.X) * _cameraSettings.PixelDeltaU)
             + ((j + offset.Y) * _cameraSettings.PixelDeltaV);
-        var rayOrigin = _cameraSettings.LookFrom;
+        var rayOrigin = _cameraSettings.DefocusAngle <=0 ? 
+            _cameraSettings.LookFrom : 
+            DefocusDiskSample();
         var rayDirection = pixelSample - rayOrigin;
         
         return new Ray(rayOrigin, rayDirection);
@@ -90,6 +92,12 @@ public class CameraService : ICameraService
         var unitDirection = r.Direction.UnitVector();
         var a = 0.5 * (unitDirection.Y + 1.0);
         return (1.0-a) * Colors.White + a * Colors.LightBlue;
+    }
+
+    private Point3 DefocusDiskSample()
+    {
+        var p = Constants.RandomInUnitDisk();
+        return _cameraSettings.LookFrom + _cameraSettings.DefocusDiskU * p.X + _cameraSettings.DefocusDiskV * p.Y;
     }
     
     private static int Round(double value)
