@@ -69,12 +69,12 @@ public class CameraService : ICameraService
         
         return new Ray(rayOrigin, rayDirection);
     }
-    private Vec3 SampleSquare()
+    private static Vec3 SampleSquare()
     {
         // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
         return new Vec3(Constants.RandomDouble()-0.5, Constants.RandomDouble()-0.5, 0);
     }
-    private Color RayColor(Ray r,int depth ,Hittable world)
+    private static Color RayColor(Ray r,int depth ,Hittable world)
     {
         if (depth <= 0)
         {

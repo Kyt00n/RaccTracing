@@ -4,12 +4,16 @@ using RaccTracing.Domain.Entities;
 
 namespace RaccTracing.Web;
 
-public class CameraSettingsInitializer
+public static class CameraSettingsInitializer
 {
-    public CameraSettings CameraSettings { get; }
+    public static CameraSettings CameraSettings { get;private set; }
 
-    public CameraSettingsInitializer(IConfiguration configuration)
+    static CameraSettingsInitializer()
     {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         var renderImageSetup = configuration.GetSection("RenderImageSetup").Get<RenderImageSetup>();
         if (renderImageSetup == null)
         {
