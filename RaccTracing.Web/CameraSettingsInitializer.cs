@@ -19,15 +19,24 @@ public class CameraSettingsInitializer
         {
             ImageWidth = renderImageSetup.ImageWidth,
             AspectRatio = renderImageSetup.AspectRatio,
-            FocalLength = renderImageSetup.FocalLength,
-            ViewportHeight = renderImageSetup.ViewPortHeight,
             SamplesPerPixel = renderImageSetup.SamplesPerPixel,
+            VerticalFov = renderImageSetup.VerticalFov,
             MaxDepth = renderImageSetup.MaxDepth,
-            CameraCenter = new Point3(
-                renderImageSetup.CameraCenter.X,
-                renderImageSetup.CameraCenter.Y,
-                renderImageSetup.CameraCenter.Z
+            LookFrom = new Point3(
+                renderImageSetup.LookFrom.X,
+                renderImageSetup.LookFrom.Y,
+                renderImageSetup.LookFrom.Z
             ),
+            LookAt = new Point3(
+                renderImageSetup.LookAt.X,
+                renderImageSetup.LookAt.Y,
+                renderImageSetup.LookAt.Z
+            ),
+            VUp = new Vec3(
+                renderImageSetup.Up.X,
+                renderImageSetup.Up.Y,
+                renderImageSetup.Up.Z
+            )
         };
     }
 }

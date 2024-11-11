@@ -62,7 +62,7 @@ public class CameraService : ICameraService
         var pixelSample = _cameraSettings.Pixel00Location
             + ((i + offset.X) * _cameraSettings.PixelDeltaU)
             + ((j + offset.Y) * _cameraSettings.PixelDeltaV);
-        var rayOrigin = _cameraSettings.CameraCenter;
+        var rayOrigin = _cameraSettings.LookFrom;
         var rayDirection = pixelSample - rayOrigin;
         
         return new Ray(rayOrigin, rayDirection);

@@ -1,6 +1,6 @@
 namespace RaccTracing.Domain.Configuration;
 
-public class CameraCenterSetup
+public class LookFromSetup
 {
     public double X { get; set; }
     public double Y { get; set; }

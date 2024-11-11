@@ -22,9 +22,7 @@ public class CameraServiceTests
         {
             ImageWidth = 100,
             AspectRatio = 1.7778,
-            FocalLength = 1.0,
-            ViewportHeight = 2.0,
-            CameraCenter = new Point3(0, 0, 0)
+            LookFrom = new Point3(0, 0, 0)
         };
         _cameraService = new CameraService(_cameraSettings);
     }
