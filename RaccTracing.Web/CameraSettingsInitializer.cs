@@ -13,6 +13,7 @@ public static class CameraSettingsInitializer
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: true)
             .Build();
         var renderImageSetup = configuration.GetSection("RenderImageSetup").Get<RenderImageSetup>();
         if (renderImageSetup == null)

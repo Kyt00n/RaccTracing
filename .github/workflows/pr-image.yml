@@ -35,6 +35,8 @@ jobs:
         
       - name: Run application to generate PPM image
         working-directory: RaccTracing.Web
+        env:
+          ASPNETCORE_ENVIRONMENT: Dev
         run: dotnet run $GITHUB_WORKSPACE/output/image.ppm
         
       - name: Install ImageMagick
