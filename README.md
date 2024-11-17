@@ -1,5 +1,18 @@
 # RaccTracing Project - Personal Ray Tracing Engine 
 
+This project started while studying "Ray Tracing in One Weekend" book series by Peter Shirley, Trevor David Black and Steve Hollasch. I wanted to put my own spin at it thus it's written in C# in Clean Architecture (as much as possible).
+# RaccTracing v1 Preview
+Progres of v1 version of a project (v1 covers features from the first book)
+![sheeeesh](https://github.com/user-attachments/assets/16f35781-6332-4cf9-b17c-f6b45b2dfed7)
+Final Render \
+Progress: \
+![normal ball](https://github.com/user-attachments/assets/55419081-25f8-45f8-8c6e-85aaa8bf4a8f)
+![antialiasing](https://github.com/user-attachments/assets/27e64973-4b40-460a-9e81-347e98b645f6)
+![matte](https://github.com/user-attachments/assets/1a25c3ae-7688-465c-a26f-d25e4af8b899)
+![matte without accne](https://github.com/user-attachments/assets/ed093b1c-00c5-4b77-b33e-5d4a5e930020)
+![bug](https://github.com/user-attachments/assets/cb892850-49f1-4eff-8fd9-d5a5564349c5)
+![fuzz](https://github.com/user-attachments/assets/add2bb43-c7a3-4f1a-b76e-22cf663213dd)
+
 
 # Theory
 
