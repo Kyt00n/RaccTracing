@@ -43,7 +43,8 @@ public static class CameraSettingsInitializer
                 renderImageSetup.Up.X,
                 renderImageSetup.Up.Y,
                 renderImageSetup.Up.Z
-            )
+            ),
+            IsMultiThreaded = renderImageSetup.IsMultiThreaded
         };
     }
 }

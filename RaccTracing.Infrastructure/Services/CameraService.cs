@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 using RaccTracing.Application.Interfaces;
 using RaccTracing.Domain.ColorConstants;
@@ -18,6 +19,18 @@ public class CameraService : ICameraService
 
     public void Render(StringBuilder output, Hittable world)
     {
+        if (_cameraSettings.IsMultiThreaded)
+        {
+            RenderMultiThreaded(output, world);
+        }
+        else
+        {
+            RenderSingleThread(output, world);
+        }
+    }
+
+    private void RenderSingleThread(StringBuilder output, Hittable world)
+    {
         output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
         
         for (var j = 0; j < _cameraSettings.ImageHeight; j++)
@@ -26,13 +39,40 @@ public class CameraService : ICameraService
             for (var i = 0; i < _cameraSettings.ImageWidth; i++)
             {
                 var pixelColor = new Color(0, 0, 0);
-                for (int sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
+                for (var sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
                 {
                     var ray = GetRay(i, j);
                     pixelColor += RayColor(ray,_cameraSettings.MaxDepth ,world);
                 }
                 WriteColor(output, pixelColor*_cameraSettings.PixelSamplesScale);
             }
+        }
+        Console.WriteLine("Done");
+    }
+    private void RenderMultiThreaded(StringBuilder output, Hittable world)
+    {
+        output.Append($"P3\n{_cameraSettings.ImageWidth} {_cameraSettings.ImageHeight}\n255\n");
+        var lines = new ConcurrentBag<ConcurrentLine>();
+        Parallel.For(0, _cameraSettings.ImageHeight, j =>
+        {
+            Console.WriteLine($"Scan lines remaining: {_cameraSettings.ImageHeight - j}, calculated on core: {Environment.CurrentManagedThreadId}");
+            var lineBuilder = new StringBuilder();
+            for (var i = 0; i < _cameraSettings.ImageWidth; i++)
+            {
+                var pixelColor = new Color(0, 0, 0);
+                for (var sample = 0; sample < _cameraSettings.SamplesPerPixel; sample++)
+                {
+                    var ray = GetRay(i, j);
+                    pixelColor += RayColor(ray,_cameraSettings.MaxDepth ,world);
+                }
+                WriteColor(lineBuilder, pixelColor*_cameraSettings.PixelSamplesScale);
+            }
+            lines.Add(new ConcurrentLine(j, lineBuilder));
+        });
+        
+        foreach (var line in lines.OrderBy(x => x.LineNumber))
+        {
+            output.Append(line);
         }
         Console.WriteLine("Done");
     }

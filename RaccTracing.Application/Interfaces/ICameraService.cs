@@ -6,6 +6,6 @@ namespace RaccTracing.Application.Interfaces;
 
 public interface ICameraService
 {
-    void Render(StringBuilder output, Hittable world);
+    public void Render(StringBuilder output, Hittable world);
     
 }
