@@ -10,9 +10,10 @@ public class CameraSettings(
     double focusDistance,
     Point3 lookFrom,
     Point3 lookAt,
-    Vec3 vUp)
+    Vec3 vUp,
+    bool isMultiThreaded)
 {
-    public CameraSettings() : this(0, 0.0, 1,1, 90,0.0,0.0,new Point3(0, 0, 0), new Point3(0, 0, -1), new Vec3(0, 1, 0))
+    public CameraSettings() : this(0, 0.0, 1,1, 90,0.0,0.0,new Point3(0, 0, 0), new Point3(0, 0, -1), new Vec3(0, 1, 0), false)
     {
     }
 
@@ -28,6 +29,7 @@ public class CameraSettings(
     public Point3 LookAt { get; init; } = lookAt;
     public Vec3 VUp { get; init; } = vUp;
 
+    public bool IsMultiThreaded { get; init; } = isMultiThreaded;
     
     private Vec3 W =>(LookFrom - LookAt).UnitVector();
     private Vec3 U => Vec3.Cross(VUp,W).UnitVector();

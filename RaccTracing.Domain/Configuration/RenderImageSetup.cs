@@ -13,4 +13,5 @@ public class RenderImageSetup
     public LookFromSetup LookFrom { get; set; }
     public LookAtSetup LookAt { get; set; }
     public VUpSetup Up { get; set; }
+    public bool IsMultiThreaded { get; set; }
 }
