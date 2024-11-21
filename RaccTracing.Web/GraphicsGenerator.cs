@@ -44,9 +44,9 @@ public class GraphicsGenerator(ICameraService cameraService)
                     {
                         // metal
                         var albedo = Color.Random(0.5, 1);
-                        var fuzz = random.NextDouble() * 0.5;
-                        sphereMaterial = new Metal(albedo, fuzz);
-                        world.Add(new Sphere(center, 0.2, sphereMaterial));
+                        sphereMaterial = new Metal(albedo, Constants.RandomDouble(0, 0.5));
+                        var center2= center + new Vec3(0, Constants.RandomDouble(0, 0.5), 0);
+                        world.Add(new Sphere(center, center2, 0.2, sphereMaterial));
                     }
                     else
                     {
