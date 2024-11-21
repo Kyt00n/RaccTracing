@@ -98,6 +98,9 @@ public class CameraService : ICameraService
 
     private Ray GetRay(int i, int j)
     {
+        // Construct a camera ray originating from the defocus disk and directed at a randomly
+        // sampled point around the pixel location i, j.
+        
         var offset = SampleSquare();
         var pixelSample = _cameraSettings.Pixel00Location
             + ((i + offset.X) * _cameraSettings.PixelDeltaU)
@@ -106,8 +109,8 @@ public class CameraService : ICameraService
             _cameraSettings.LookFrom : 
             DefocusDiskSample();
         var rayDirection = pixelSample - rayOrigin;
-        
-        return new Ray(rayOrigin, rayDirection);
+        var rayTime = Constants.RandomDouble();
+        return new Ray(rayOrigin, rayDirection, rayTime);
     }
     private static Vec3 SampleSquare()
     {
