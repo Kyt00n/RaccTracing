@@ -23,7 +23,7 @@ public class Dielectric(double refIdx) : Material
             : 
             Vec3.Refract(unitDirection, hitRecord.Normal, ri);
         
-        scattered = new Ray(hitRecord.P, direction);
+        scattered = new Ray(hitRecord.P, direction, rayIn.Time);
         return true;
     }
     

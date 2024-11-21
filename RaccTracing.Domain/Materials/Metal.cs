@@ -12,7 +12,7 @@ public class Metal(Color albedo, double fuzz) : Material
     {
         var reflected = Vec3.Reflect(rayIn.Direction.UnitVector(), hitRecord.Normal);
         reflected += Fuzz * Vec3.RandomInUnitSphere();
-        scattered = new Ray(hitRecord.P, reflected);
+        scattered = new Ray(hitRecord.P, reflected, rayIn.Time);
         attenuation = Albedo;
         return Vec3.Dot(scattered.Direction, hitRecord.Normal) > 0;
     }

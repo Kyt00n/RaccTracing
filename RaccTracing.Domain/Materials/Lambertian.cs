@@ -16,7 +16,7 @@ public class Lambertian(Color albedo) : Material
             scatterDirection = hitRecord.Normal;
         }
         
-        scattered = new Ray(hitRecord.P, scatterDirection);
+        scattered = new Ray(hitRecord.P, scatterDirection, rayIn.Time);
         attenuation = Albedo;
         return true;
     }
