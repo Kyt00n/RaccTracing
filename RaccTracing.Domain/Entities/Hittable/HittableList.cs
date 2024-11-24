@@ -2,7 +2,7 @@ namespace RaccTracing.Domain.Entities.Hittable;
 
 public class HittableList : Hittable
 {
-    List<Hittable> Objects { get; set; }
+    public List<Hittable> Objects { get; set; }
     private AxisAlignedBoundingBox Box { get; set; }
     
     public HittableList()
