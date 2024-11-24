@@ -3,6 +3,7 @@ namespace RaccTracing.Domain.Entities.Hittable;
 public class HittableList : Hittable
 {
     List<Hittable> Objects { get; set; }
+    private AxisAlignedBoundingBox Box { get; set; }
     
     public HittableList()
     {
@@ -12,6 +13,7 @@ public class HittableList : Hittable
     public void Add(Hittable hittable)
     {
         Objects.Add(hittable);
+        Box = new AxisAlignedBoundingBox(Box, hittable.BoundingBox());
     }
 
     public void Clear()
@@ -45,5 +47,10 @@ public class HittableList : Hittable
             rec = tempRec;
         }
         return hitAnything;
+    }
+
+    public override AxisAlignedBoundingBox BoundingBox()
+    {
+        return Box;
     }
 }

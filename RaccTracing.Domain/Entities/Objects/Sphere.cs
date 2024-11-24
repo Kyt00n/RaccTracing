@@ -8,12 +8,15 @@ public class Sphere : Hittable.Hittable
     private Ray Center { get; }
     private double Radius { get; }
     private Material Material { get; set; }
+    private AxisAlignedBoundingBox BBox { get; set; }
     
     public Sphere(Point3 staticCenter, double radius, Material material)
     {
         Center = new Ray(staticCenter, new Vec3(0, 0, 0));
         Radius = radius;
         Material = material;
+        var rvec = new Vec3(radius, radius, radius);
+        BBox = new AxisAlignedBoundingBox(staticCenter - rvec, staticCenter + rvec);
     }
     
     public Sphere(Point3 centerStart, Point3 centerEnd, double radius, Material material)
@@ -21,6 +24,10 @@ public class Sphere : Hittable.Hittable
         Center = new Ray(centerStart, centerEnd - centerStart);
         Radius = radius;
         Material = material;
+        var rvec = new Vec3(radius, radius, radius);
+        var box0 = new AxisAlignedBoundingBox(Center.At(0)-rvec, Center.At(0)+rvec);
+        var box1 = new AxisAlignedBoundingBox(Center.At(1)-rvec, Center.At(1)+rvec);
+        BBox = new AxisAlignedBoundingBox(box0, box1);
     }
 
     public override bool Hit(Ray r, double tMin, double tMax, ref HitRecord rec)
@@ -85,5 +92,10 @@ public class Sphere : Hittable.Hittable
         var outwardNormal = (rec.P - currentCenter) / Radius;
         rec.SetFaceNormal(r, outwardNormal);
         return true;
+    }
+
+    public override AxisAlignedBoundingBox BoundingBox()
+    {
+        return BBox;
     }
 }
